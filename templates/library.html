@@ -1,0 +1,162 @@
+{% extends "base_template.html" %}
+
+{% block title %}Library - Bard Music Player{% endblock %}
+
+{% block stylesheets %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/library.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/common.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="library-container">
+    <!-- Page Header -->
+    <div class="library-header">
+        <h1 class="page-title">Your Library</h1>
+        <p class="page-subtitle">Download and organize your music collection</p>
+    </div>
+
+    <!-- YouTube Download Section -->
+    <div class="download-section">
+        <div class="download-card">
+            <div class="download-header">
+                <div class="download-icon">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/>
+                    </svg>
+                </div>
+                <div class="download-title">
+                    <h2>Download from YouTube</h2>
+                    <p>Enter a YouTube URL to download and add to your library</p>
+                </div>
+            </div>
+            
+            <form class="download-form" id="download-form">
+                <div class="url-input-container">
+                    <div class="input-group">
+                        <div class="input-icon">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H6.5C3.46 7 1 9.46 1 12.5S3.46 18 6.5 18H10v-2H6.5c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9.5-6H14v2h3.5c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1H14v2h3.5c3.04 0 5.5-2.46 5.5-5.5S20.54 7 17.5 7z"/>
+                            </svg>
+                        </div>
+                        <input type="url" id="youtube-url" class="url-input" placeholder="https://www.youtube.com/watch?v=..." required>
+                        <button type="submit" class="download-btn" id="download-btn">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/>
+                            </svg>
+                            Download
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="download-options" style="display: none;">
+                    <div class="option-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="auto-add-playlist">
+                            <span class="checkmark"></span>
+                            Automatically add to a playlist
+                        </label>
+                        <select id="target-playlist" class="playlist-select" style="display: none;">
+                            <option value="">Select playlist...</option>
+                        </select>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Active Downloads Section -->
+    <div class="active-downloads-section" id="active-downloads-section" style="display: none;">
+        <div class="section-header">
+            <h3 class="section-title">Active Downloads</h3>
+        </div>
+        <div class="downloads-container" id="downloads-container">
+            <!-- Active download items will be inserted here -->
+        </div>
+    </div>
+
+    <div class="library-stats">
+        <div class="stat-item">
+            <span class="stat-number" id="total-songs">0</span>
+            <span class="stat-label">Songs</span>
+        </div>
+        <div class="stat-item">
+            <span class="stat-number" id="total-duration">0:00</span>
+            <span class="stat-label">Total Duration</span>
+        </div>
+        <div class="stat-item">
+            <span class="stat-number" id="total-size">0 MB</span>
+            <span class="stat-label">Storage Used</span>
+        </div>
+    </div>
+
+    <!-- Library Content Section -->
+    <div class="content-section">
+        <div class="section-header">
+            <h2 class="section-title">Song Library</h2>
+            <div class="library-search-container">
+                <input type="text" id="library-search" class="playlist-search-input" placeholder="Search songs...">
+                <svg class="playlist-search-icon" width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
+                </svg>
+            </div>
+        </div>
+        
+        <div class="library-table">
+            <div class="library-table-header">
+                <div></div>
+                <div>Title</div>
+                <div>Duration</div>
+                <div>Size</div>
+                <div>Actions</div>
+            </div>
+            <!-- Dynamic song rows will be inserted here -->
+            <div class="library-table-body" id="library-table-body">
+                <!-- Songs will be populated by JavaScript -->
+            </div>
+        </div>
+        
+        <div class="empty-library" id="empty-library" style="display: none;">
+            <div class="empty-icon">
+                <svg width="64" height="64" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/>
+                </svg>
+            </div>
+            <h3>Your library is empty</h3>
+            <p>Download your first song using the YouTube link above</p>
+        </div>
+    </div>
+</div>
+
+<!-- Rename Song Modal -->
+<div class="modal-backdrop" id="rename-song-modal">
+    <div class="modal-container">
+        <div class="modal-header">
+            <h2 class="modal-title">Rename Song</h2>
+            <button class="modal-close-btn" id="rename-close-modal-btn">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"/>
+                </svg>
+            </button>
+        </div>
+        
+        <form class="modal-form" id="rename-song-form">
+            <input type="hidden" id="rename-song-id">
+            
+            <div class="form-group">
+                <label for="rename-song-title" class="form-label">Song Title</label>
+                <input type="text" id="rename-song-title" class="form-input" placeholder="Enter song title..." maxlength="200" required>
+                <div class="character-count">
+                    <span id="title-count">0</span>/200
+                </div>
+            </div>
+            
+            <div class="modal-actions" style="margin-bottom: 20px;">
+                <button type="button" class="btn btn-secondary" id="rename-cancel-btn">Cancel</button>
+                <button type="submit" class="btn btn-primary">Save Changes</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script src="{{ url_for('static', filename='js/library.js') }}"></script>
+{% endblock %} 

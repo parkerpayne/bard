@@ -1,0 +1,463 @@
+/* Settings Page Styles */
+.settings-container {
+    padding: 24px;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+/* Page Header */
+.settings-header {
+    margin-bottom: 32px;
+}
+
+.page-title {
+    font-size: 48px;
+    font-weight: 900;
+    color: #ffffff;
+    margin: 0 0 8px 0;
+    line-height: 1.1;
+}
+
+.page-subtitle {
+    font-size: 16px;
+    color: #b3b3b3;
+    margin: 0;
+    font-weight: 400;
+}
+
+/* Settings Content */
+.settings-content {
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+}
+
+.settings-section {
+    width: 100%;
+}
+
+/* Section Card */
+.section-card {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
+    overflow: hidden;
+    backdrop-filter: blur(10px);
+    transition: all 0.2s ease;
+}
+
+.section-card:hover {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(255, 255, 255, 0.2);
+}
+
+/* Section Header */
+.section-header {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    padding: 32px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.section-icon {
+    width: 64px;
+    height: 64px;
+    background: linear-gradient(135deg, #1db954, #1ed760);
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #000000;
+    flex-shrink: 0;
+}
+
+.section-title-group {
+    flex: 1;
+}
+
+.section-title {
+    font-size: 24px;
+    font-weight: 700;
+    color: #ffffff;
+    margin: 0 0 8px 0;
+}
+
+.section-description {
+    font-size: 14px;
+    color: #b3b3b3;
+    margin: 0;
+    line-height: 1.4;
+}
+
+/* Status Indicator */
+.section-status {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+}
+
+.status-indicator {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    transition: all 0.2s ease;
+}
+
+.status-indicator.online {
+    background: #1db954;
+    box-shadow: 0 0 8px rgba(29, 185, 84, 0.5);
+}
+
+.status-indicator.offline {
+    background: #ff6b6b;
+    box-shadow: 0 0 8px rgba(255, 107, 107, 0.5);
+}
+
+.status-indicator.testing {
+    background: #ffa726;
+    box-shadow: 0 0 8px rgba(255, 167, 38, 0.5);
+    animation: pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+}
+
+.status-text {
+    font-size: 14px;
+    font-weight: 500;
+    color: #ffffff;
+}
+
+/* Settings Form */
+.settings-form {
+    padding: 32px;
+}
+
+.form-row {
+    margin-bottom: 24px;
+}
+
+.form-row:last-child {
+    margin-bottom: 0;
+}
+
+/* Form Group Enhancements */
+.form-group {
+    position: relative;
+}
+
+/* Label with Info */
+.form-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #ffffff;
+    margin-bottom: 8px;
+}
+
+.label-info {
+    position: relative;
+    color: #b3b3b3;
+    cursor: help;
+}
+
+.label-info:hover {
+    color: #ffffff;
+}
+
+.label-info:hover .tooltip {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.tooltip {
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%) translateY(-8px);
+    background: #2a2a2a;
+    border: 1px solid #535353;
+    border-radius: 8px;
+    padding: 12px;
+    min-width: 250px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.2s ease;
+    z-index: 1000;
+}
+
+.tooltip::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    border: 6px solid transparent;
+    border-top-color: #2a2a2a;
+}
+
+.tooltip p {
+    color: #ffffff;
+    font-size: 12px;
+    line-height: 1.4;
+    margin: 0;
+}
+
+.tooltip p + p {
+    margin-top: 8px;
+}
+
+/* Input Group */
+.input-group {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.input-group .form-input {
+    padding-right: 48px;
+}
+
+.toggle-visibility-btn {
+    position: absolute;
+    right: 12px;
+    background: none;
+    border: none;
+    color: #b3b3b3;
+    cursor: pointer;
+    padding: 4px;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+}
+
+.toggle-visibility-btn:hover {
+    color: #ffffff;
+    background: rgba(255, 255, 255, 0.1);
+}
+
+/* Form Help Text */
+.form-help {
+    margin-top: 6px;
+    font-size: 12px;
+    color: #b3b3b3;
+    line-height: 1.4;
+}
+
+.form-help a {
+    color: #1db954;
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+
+.form-help a:hover {
+    color: #1ed760;
+    text-decoration: underline;
+}
+
+/* Checkbox Styling */
+.checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: #ffffff;
+    font-size: 14px;
+    cursor: pointer;
+    user-select: none;
+    padding: 4px 0;
+}
+
+.checkbox-label input[type="checkbox"] {
+    display: none;
+}
+
+.checkmark {
+    width: 20px;
+    height: 20px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    flex-shrink: 0;
+}
+
+.checkbox-label input[type="checkbox"]:checked + .checkmark {
+    background: #1db954;
+    border-color: #1db954;
+}
+
+.checkbox-label input[type="checkbox"]:checked + .checkmark::after {
+    content: "✓";
+    color: #000000;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.checkbox-label:hover .checkmark {
+    border-color: rgba(255, 255, 255, 0.5);
+}
+
+.checkbox-label input[type="checkbox"]:checked:hover + .checkmark {
+    background: #1ed760;
+    border-color: #1ed760;
+}
+
+/* Slider Styling */
+.slider-group {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.volume-slider {
+    flex: 1;
+    height: 6px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 3px;
+    outline: none;
+    cursor: pointer;
+    -webkit-appearance: none;
+}
+
+.volume-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 20px;
+    height: 20px;
+    background: #1db954;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.volume-slider::-webkit-slider-thumb:hover {
+    background: #1ed760;
+    transform: scale(1.1);
+}
+
+.volume-slider::-moz-range-thumb {
+    width: 20px;
+    height: 20px;
+    background: #1db954;
+    border-radius: 50%;
+    cursor: pointer;
+    border: none;
+    transition: all 0.2s ease;
+}
+
+.volume-slider::-moz-range-thumb:hover {
+    background: #1ed760;
+    transform: scale(1.1);
+}
+
+.volume-value {
+    font-size: 14px;
+    font-weight: 600;
+    color: #1db954;
+    min-width: 40px;
+    text-align: right;
+}
+
+/* Form Actions */
+.form-actions {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-top: 32px;
+    padding-top: 24px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Discord Specific Styling */
+.settings-section:first-child .section-icon {
+    background: linear-gradient(135deg, #5865f2, #7289da);
+}
+
+/* Button Loading States */
+.btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none !important;
+}
+
+.btn.loading {
+    position: relative;
+    color: transparent;
+}
+
+.btn.loading::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 16px;
+    height: 16px;
+    border: 2px solid;
+    border-color: currentColor transparent currentColor transparent;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    color: inherit;
+}
+
+@keyframes spin {
+    0% { transform: translate(-50%, -50%) rotate(0deg); }
+    100% { transform: translate(-50%, -50%) rotate(360deg); }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .settings-container {
+        padding: 16px;
+    }
+    
+    .page-title {
+        font-size: 36px;
+    }
+    
+    .section-header {
+        flex-direction: column;
+        text-align: center;
+        gap: 16px;
+        padding: 24px;
+    }
+    
+    .section-status {
+        order: -1;
+    }
+    
+    .settings-form {
+        padding: 24px;
+    }
+    
+    .form-actions {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .btn {
+        width: 100%;
+        justify-content: center;
+    }
+    
+    .tooltip {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        min-width: 280px;
+        max-width: 90vw;
+    }
+    
+    .tooltip::after {
+        display: none;
+    }
+} 

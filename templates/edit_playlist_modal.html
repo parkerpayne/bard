@@ -1,0 +1,75 @@
+<!-- Edit Playlist Modal -->
+<div class="modal-backdrop" id="edit-playlist-modal">
+    <div class="modal-container">
+        <div class="modal-header">
+            <h2 class="modal-title">Edit Playlist</h2>
+            <button class="modal-close-btn" id="edit-close-modal-btn">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"/>
+                </svg>
+            </button>
+        </div>
+        
+        <form class="modal-form" id="edit-playlist-form">
+            <input type="hidden" id="edit-playlist-id">
+            
+            <div class="form-group">
+                <label for="edit-playlist-name" class="form-label">Playlist Name</label>
+                <input type="text" id="edit-playlist-name" class="form-input" placeholder="Enter playlist name..." maxlength="100" required>
+                <div class="character-count">
+                    <span id="edit-name-count">0</span>/100
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Playlist Cover</label>
+                <div class="image-upload-container">
+                    <div class="image-preview" id="edit-image-preview">
+                        <div class="image-placeholder">
+                            <svg width="48" height="48" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/>
+                            </svg>
+                            <span>Choose an image</span>
+                        </div>
+                        <img id="edit-preview-image" style="display: none;" alt="Playlist cover preview">
+                        <button type="button" class="remove-image-btn" id="edit-remove-image-btn" style="display: none;">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"/>
+                            </svg>
+                        </button>
+                    </div>
+                    <input type="file" id="edit-playlist-image" class="image-input" accept="image/*">
+                    <div class="image-upload-info">
+                        <p>Recommended: 300x300px, JPG or PNG</p>
+                        <p>Max file size: 5MB</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Tags</label>
+                <div class="tag-input-container">
+                    <div class="tag-input-wrapper">
+                        <div class="selected-tags-container" id="edit-selected-tags-container">
+                            <!-- Selected tags will appear here -->
+                        </div>
+                        <input type="text" id="edit-tag-input" class="tag-input" placeholder="Add tags..." maxlength="20">
+                        <button type="button" class="add-tag-btn" id="edit-add-tag-btn">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
+                            </svg>
+                        </button>
+                    </div>
+                    <div class="tag-input-info">
+                        <p>Press Enter or click + to add tags. Click X to remove.</p>
+                    </div>
+                </div>
+            </div>
+        </form>
+        
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" id="edit-cancel-btn">Cancel</button>
+            <button type="submit" form="edit-playlist-form" class="btn btn-primary" id="edit-save-btn">Save Changes</button>
+        </div>
+    </div>
+</div> 

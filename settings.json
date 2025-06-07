@@ -1,0 +1,12 @@
+{
+  "discord": {
+    "botToken": "",
+    "channelId": "",
+    "connected": true
+  },
+  "general": {
+    "autoPlay": true,
+    "showNotifications": true,
+    "defaultVolume": 50
+  }
+}

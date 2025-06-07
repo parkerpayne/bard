@@ -1,0 +1,256 @@
+/* Playlists Container */
+.playlists-container {
+    padding: 24px;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+/* Section Header */
+.section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 24px;
+}
+
+.section-title {
+    margin: 0;
+}
+
+/* Cards and lists */
+.card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 20px;
+}
+
+.card {
+    background: linear-gradient(145deg, #1a1a1a 0%, #0f0f0f 100%);
+    border-radius: 12px;
+    padding: 20px;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    border: 1px solid transparent;
+}
+
+.card:hover {
+    background: linear-gradient(145deg, #242424 0%, #1a1a1a 100%);
+    border-color: #333333;
+    transform: translateY(-2px);
+}
+
+/* Tag Styles */
+.tags-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 8px;
+}
+
+.tag {
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 12px;
+    font-size: 11px;
+    font-weight: 500;
+    border-radius: 16px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border: 1px solid transparent;
+    white-space: nowrap;
+}
+
+.tag:hover {
+    transform: scale(1.05);
+    border-color: rgba(255, 255, 255, 0.2);
+}
+
+/* Tag color variants - All using Spotify green */
+.tag {
+    background: linear-gradient(135deg, #1db954, #1ed760);
+    color: #000000;
+    font-weight: 600;
+}
+
+/* Filter Section */
+.filter-section {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 16px;
+    padding: 24px;
+    margin-bottom: 32px;
+}
+
+.filter-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
+}
+
+.filter-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.clear-filters {
+    background: none;
+    border: 1px solid #535353;
+    color: #b3b3b3;
+    padding: 6px 12px;
+    border-radius: 16px;
+    font-size: 12px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.clear-filters:hover {
+    border-color: #ffffff;
+    color: #ffffff;
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.filter-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.filter-tags .tag {
+    opacity: 0.7;
+    background: rgba(255, 255, 255, 0.1) !important;
+    color: #b3b3b3 !important;
+    border: 1px solid #535353;
+}
+
+.filter-tags .tag:hover {
+    opacity: 1;
+    color: #ffffff !important;
+    border-color: #ffffff;
+}
+
+.filter-tags .tag.active {
+    opacity: 1;
+    border-color: #1db954;
+    background: rgba(29, 185, 84, 0.2) !important;
+    color: #1db954 !important;
+}
+
+/* Small tags for playlist cards */
+.card .tags-container .tag {
+    font-size: 10px;
+    padding: 3px 8px;
+}
+
+/* Table row tags */
+.playlist-table-row .tags-container {
+    margin-top: 4px;
+}
+
+.playlist-table-row .tags-container .tag {
+    font-size: 10px;
+    padding: 2px 6px;
+}
+
+/* Playlist Table Column Alignment */
+.playlist-table-header > div:nth-child(3),
+.playlist-table-header > div:nth-child(4) {
+    text-align: right;
+}
+
+.playlist-table-row > div:nth-child(3) {
+    text-align: right;
+}
+
+.playlist-table-row > div:nth-child(4) {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+}
+
+/* Playlist Table Rounded Corners and Hover Effects */
+.playlist-table-header {
+    border-radius: 12px 12px 0 0;
+    overflow: hidden;
+}
+
+.playlist-table-row:first-of-type {
+    border-radius: 0;
+}
+
+.playlist-table-row:last-of-type {
+    border-radius: 0 0 12px 12px;
+    border-bottom: none;
+}
+
+.playlist-table-row {
+    overflow: hidden;
+    margin: 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+/* Playlist Table Actions Dropdown - escape overflow container */
+.playlist-table-row {
+    position: relative;
+}
+
+.playlist-table .actions-dropdown {
+    position: fixed;
+    background: #2a2a2a;
+    border: 1px solid #535353;
+    border-radius: 8px;
+    padding: 8px 0;
+    min-width: 120px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+    z-index: 999999;
+    animation: dropdownFadeIn 0.2s ease;
+}
+
+@keyframes dropdownFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-4px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Playlist Table Row Hover */
+.playlist-table-row:hover {
+    background-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+.playlist-table-row {
+    position: relative;
+}
+
+/* Playlist Album Art Play Functionality */
+.playlist-album-art {
+    transition: all 0.2s ease;
+}
+
+.playlist-album-art:hover {
+    transform: scale(1.05);
+}
+
+.card-play-overlay {
+    border-radius: 8px;
+}
+
+.playlist-album-art:hover .play-overlay {
+    opacity: 1;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .playlists-container {
+        padding: 16px;
+    }
+}
