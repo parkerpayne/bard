@@ -1,0 +1,15 @@
+services:
+  bot:
+    build: .
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      - DATABASE_PATH=/app/data/bard.db
+    ports:
+      - "5000:5000"   # Media player web UI (set WEB_PORT=0 in .env to disable)
+    volumes:
+      - bard_data:/app/data
+      - ./web:/app/web   # Live-edit: changes to web/ show up on refresh (no rebuild)
+
+volumes:
+  bard_data:

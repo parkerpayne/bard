@@ -1,0 +1,19 @@
+<footer class="media-bar">
+  <span class="now-playing">Nothing playing</span>
+  <button type="button" disabled>Prev</button>
+  <button type="button" disabled>Play</button>
+  <button type="button" disabled>Stop</button>
+  <button type="button" disabled>Next</button>
+</footer>
+
+<style>
+  .media-bar {
+    background: var(--bg-card); border-top: 1px solid var(--border); padding: 0.75rem 1rem;
+    display: flex; align-items: center; gap: 1rem;
+  }
+  .media-bar .now-playing { flex: 1; color: var(--text-muted); font-size: 0.9rem; }
+  .media-bar button {
+    background: var(--accent); color: #fff; border: none; padding: 0.5rem 1rem; border-radius: 4px; cursor: pointer;
+  }
+  .media-bar button:disabled { opacity: 0.5; cursor: not-allowed; }
+</style>

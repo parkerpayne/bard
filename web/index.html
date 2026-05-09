@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bard Music</title>
+  <style>
+    * { box-sizing: border-box; }
+    body { margin: 0; font-family: system-ui, sans-serif; background: #181818; color: #fff; min-height: 100vh; }
+  </style>
+</head>
+<body>
+  <div id="app"></div>
+
+  <script>
+    (function () {
+      const app = document.getElementById('app');
+
+      function fetchInto(url, slotId) {
+        return fetch(url)
+          .then(function (r) { return r.text(); })
+          .then(function (html) {
+            var slot = document.getElementById(slotId);
+            if (slot) slot.innerHTML = html;
+          });
+      }
+
+      fetch('templates/baseTemplate.html')
+        .then(function (r) { return r.text(); })
+        .then(function (html) {
+          app.innerHTML = html;
+          return Promise.all([
+            fetchInto('templates/sideBar.html', 'sidebar-slot'),
+            fetchInto('templates/mediaPlayerBar.html', 'media-bar-slot'),
+            fetchInto('templates/home.html', 'main-content')
+          ]);
+        })
+        .catch(function (err) {
+          app.innerHTML = '<p>Failed to load: ' + err.message + '</p>';
+        });
+    })();
+  </script>
+</body>
+</html>
