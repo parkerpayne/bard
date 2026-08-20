@@ -1,0 +1,18 @@
+{
+  "name": "bard-desktop",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Desktop shell for the Bard music player: global playlist shortcuts.",
+  "main": "dist/main.js",
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "start": "npm run build && electron .",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "probe:platform": "npm run build && electron probe/platform.js --no-sandbox"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.2",
+    "electron": "^43.4.1",
+    "typescript": "^5.9.3"
+  }
+}
