@@ -1,9 +1,22 @@
-  .env                                                                                                                             
-  __pycache__/                                                                                                                     
-  *.pyc                                                                                                                            
-  *.pyo                                                     
-  data/
-  *.db
-  venv/
-  .venv/
-  web/covers/    
+.env
+.env.bak*
+__pycache__/
+*.pyc
+*.pyo
+data/
+*.db
+venv/
+.venv/
+web/covers/
+
+# macOS AppleDouble metadata
+._*
+.DS_Store
+
+# Frontend
+node_modules/
+web-src/dist/
+
+# Desktop shell build output
+desktop/dist/
+desktop/release/

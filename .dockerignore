@@ -10,3 +10,8 @@ data/
 venv/
 .venv/
 DND_BOT_PLAN.md
+
+# The image copies web/ (the build output), never the sources.
+node_modules
+web-src
+desktop

@@ -354,6 +354,25 @@ class GamesCog(commands.Cog):
                 self.game_remove_nickname
             )
         )
+        game_group.add_command(
+            app_commands.describe(
+                ignore="Comma-separated category names to skip (default: General, Archives, DM Tools)",
+                create_missing="Recreate any missing game channels (default: yes)",
+            )(
+                app_commands.command(
+                    name="rebuild",
+                    description="Rebuild the game database by scanning this server (use after data loss)",
+                )(self.game_rebuild)
+            )
+        )
+        game_group.add_command(
+            app_commands.describe(name="Name of the game to unregister")(
+                app_commands.command(
+                    name="forget",
+                    description="Remove a game from the database WITHOUT deleting its channels",
+                )(self.game_forget)
+            )
+        )
         self.bot.tree.add_command(game_group)
 
     async def create_game(self, interaction: discord.Interaction, name: str):
@@ -770,3 +789,229 @@ class GamesCog(commands.Cog):
         if role and role in user.roles:
             await user.remove_roles(role)
         await interaction.response.send_message(f"Removed {user.mention} from the game.", ephemeral=True)
+
+
+    DEFAULT_REBUILD_IGNORE = "General, Archives, DM Tools"
+
+    async def game_rebuild(
+        self,
+        interaction: discord.Interaction,
+        ignore: str = DEFAULT_REBUILD_IGNORE,
+        create_missing: bool = True,
+    ):
+        """
+        Reconstruct Game/Player rows by scanning the guild.
+
+        Every category is treated as a game except the ignored ones, because a
+        game's channels drift over time — renamed, deleted, moved. Missing
+        channels are recreated so the row can be written and the game works
+        again; existing channels are left exactly as they are.
+        """
+        if not interaction.guild:
+            await interaction.response.send_message("Use this in a server.", ephemeral=True)
+            return
+        perms = interaction.user.guild_permissions
+        if not (perms.administrator or perms.manage_guild):
+            await interaction.response.send_message(
+                "You need Manage Server to rebuild the game database.", ephemeral=True
+            )
+            return
+
+        await interaction.response.defer(ephemeral=True)
+        guild = interaction.guild
+        ignored = {n.strip().lower() for n in ignore.split(",") if n.strip()}
+
+        rebuilt: list[str] = []
+        repaired: list[str] = []
+        skipped: list[str] = []
+        problems: list[str] = []
+
+        async with async_session_factory() as session:
+            existing = await session.execute(select(Game).where(Game.guild_id == guild.id))
+            known_categories = {g.category_id for g in existing.scalars().all()}
+
+            for category in guild.categories:
+                if category.name.strip().lower() in ignored:
+                    continue
+                if category.id in known_categories:
+                    skipped.append(category.name)
+                    continue
+
+                try:
+                    result = await self._rebuild_one_game(
+                        guild, category, interaction.user, session, create_missing
+                    )
+                except discord.Forbidden:
+                    problems.append(f"**{category.name}** — missing permissions to repair it")
+                    continue
+                except Exception as exc:
+                    log.exception("rebuild failed for category %s", category.name)
+                    problems.append(f"**{category.name}** — {type(exc).__name__}: {exc}")
+                    continue
+
+                if result is None:
+                    problems.append(
+                        f"**{category.name}** — no channels matched; "
+                        f"add it to `ignore` if it is not a game"
+                    )
+                    continue
+
+                line, created = result
+                rebuilt.append(line)
+                if created:
+                    repaired.append(f"**{category.name}** — recreated {', '.join(created)}")
+
+            await session.commit()
+
+        embed = discord.Embed(
+            title="Game database rebuild",
+            color=discord.Color.green() if rebuilt else discord.Color.orange(),
+        )
+        embed.description = (
+            "\n".join(f"✅ {line}" for line in rebuilt) if rebuilt
+            else "No new games were found to rebuild."
+        )
+        if repaired:
+            embed.add_field(name="Channels recreated", value="\n".join(repaired)[:1024], inline=False)
+        if skipped:
+            embed.add_field(name="Already in the database", value=", ".join(skipped)[:1024], inline=False)
+        if problems:
+            embed.add_field(name="Needs attention", value="\n".join(problems)[:1024], inline=False)
+        if ignored:
+            embed.set_footer(
+                text=f"Ignored categories: {', '.join(sorted(ignored))} · "
+                     f"character names cannot be recovered (/game set-nickname)"
+            )
+        await interaction.followup.send(embed=embed, ephemeral=True)
+
+    async def _rebuild_one_game(
+        self,
+        guild: discord.Guild,
+        category: discord.CategoryChannel,
+        invoker: discord.Member,
+        session,
+        create_missing: bool,
+    ) -> tuple[str, list[str]] | None:
+        """Rebuild one category into a Game row. Returns (summary, created_channels)."""
+        wanted = dict(CHANNEL_ORDER)
+
+        found: dict[str, discord.abc.GuildChannel] = {}
+        for ch in category.channels:
+            kind = (
+                discord.ChannelType.voice if isinstance(ch, discord.VoiceChannel)
+                else discord.ChannelType.text if isinstance(ch, discord.TextChannel)
+                else None
+            )
+            if ch.name in wanted and kind == wanted[ch.name] and ch.name not in found:
+                found[ch.name] = ch
+
+        missing = [name for name in wanted if name not in found]
+        if len(missing) == len(wanted) and not create_missing:
+            return None
+
+        # Roles: reuse what is there, create what is not.
+        want_game = f"game: {category.name}".lower()
+        want_dm = f"dm: {category.name}".lower()
+        game_role = discord.utils.find(lambda r: r.name.lower() == want_game, guild.roles)
+        dm_role = discord.utils.find(lambda r: r.name.lower() == want_dm, guild.roles)
+
+        if game_role is None:
+            game_role = await guild.create_role(name=f"Game: {category.name}", mentionable=False)
+        if dm_role is None:
+            dm_role = await guild.create_role(
+                name=f"DM: {category.name}",
+                mentionable=False,
+                permissions=discord.Permissions(move_members=True),
+            )
+
+        dm_members = [m for m in dm_role.members if not m.bot]
+        dm = dm_members[0] if dm_members else invoker
+        if not dm_members:
+            await dm.add_roles(dm_role)
+
+        created: list[str] = []
+        if create_missing:
+            for name in missing:
+                if wanted[name] == discord.ChannelType.text:
+                    ch = await guild.create_text_channel(name, category=category)
+                else:
+                    ch = await guild.create_voice_channel(name, category=category)
+                found[name] = ch
+                created.append(name)
+                # Only the channels we just made get permissions applied; the
+                # ones that already existed are left untouched on purpose.
+                await self._apply_game_channel_permissions(guild, game_role, dm_role, {name: ch})
+
+        if any(name not in found for name in wanted):
+            return None
+
+        game = Game(
+            guild_id=guild.id,
+            name=category.name,
+            dm_user_id=dm.id,
+            category_id=category.id,
+            game_role_id=game_role.id,
+            dm_role_id=dm_role.id,
+            text_important_id=found["important"].id,
+            text_scheduling_id=found["scheduling"].id,
+            text_general_id=found["general"].id,
+            voice_game_id=found["game"].id,
+            voice_private_id=found["private"].id,
+        )
+        session.add(game)
+        await session.flush()
+
+        players = [m for m in game_role.members if not m.bot and m.id != dm.id]
+        for member in players:
+            session.add(Player(game_id=game.id, user_id=member.id))
+
+        return (
+            f"**{category.name}** — DM {dm.display_name}, {len(players)} player(s)",
+            created,
+        )
+
+    async def game_forget(self, interaction: discord.Interaction, name: str):
+        """
+        Drop a game's database rows and leave Discord untouched.
+
+        The counterpart to /delete-game: that one tears down the category and
+        channels, which is the wrong tool when a category was registered by
+        mistake and you just want the bot to stop treating it as a game.
+        """
+        if not interaction.guild:
+            await interaction.response.send_message("Use this in a server.", ephemeral=True)
+            return
+
+        async with async_session_factory() as session:
+            game = await get_game_by_name(session, interaction.guild.id, name)
+            if not game:
+                result = await session.execute(select(Game).where(Game.guild_id == interaction.guild.id))
+                names = [g.name for g in result.scalars().all()]
+                await interaction.response.send_message(
+                    f"No game named **{name}**."
+                    + (f"\nKnown games: {', '.join(names)}" if names else " No games are registered."),
+                    ephemeral=True,
+                )
+                return
+
+            perms = interaction.user.guild_permissions
+            if not (perms.administrator or perms.manage_guild or game.dm_user_id == interaction.user.id):
+                await interaction.response.send_message(
+                    "Only the DM of that game or someone with Manage Server can unregister it.",
+                    ephemeral=True,
+                )
+                return
+
+            game_name = game.name
+            player_count = len(
+                (await session.execute(select(Player).where(Player.game_id == game.id))).scalars().all()
+            )
+            await session.delete(game)   # players and schedule polls cascade
+            await session.commit()
+
+        await interaction.response.send_message(
+            f"Removed **{game_name}** from the database ({player_count} player record(s)).\n"
+            f"Its category, channels, and roles were left untouched.\n"
+            f"Add it to the ignore list next time: `/game rebuild ignore: {game_name}`",
+            ephemeral=True,
+        )
